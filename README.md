@@ -1,5 +1,7 @@
 ### ✅ 1. `factories`
 
+## \_\_\_/get/data/0
+
 ```json
 {
   "Data": [
@@ -15,6 +17,8 @@
 ---
 
 ### ✅ 2. `stores`
+
+## \_\_\_/get/data/1
 
 ```json
 {
@@ -32,6 +36,8 @@
 
 ### ✅ 3. `products`
 
+## \_\_\_/get/data/2
+
 ```json
 {
   "Data": [
@@ -48,6 +54,8 @@
 ---
 
 ### ✅ 4. `raw_materials`
+
+## \_\_\_/get/data/3
 
 ```json
 {
@@ -67,6 +75,8 @@
 
 ### ✅ 5. `suppliers`
 
+## \_\_\_/get/data/4
+
 ```json
 {
   "Data": [
@@ -84,6 +94,8 @@
 ---
 
 ### ✅ 6. `employees`
+
+## \_\_\_/get/data/5
 
 ```json
 {
@@ -104,6 +116,8 @@
 
 ### ✅ 7. `incoming_products`
 
+## \_\_\_/get/data/6
+
 ```json
 {
   "Data": [
@@ -121,6 +135,8 @@
 ---
 
 ### ✅ 8. `outgoing_products`
+
+## \_\_\_/get/data/7
 
 ```json
 {
@@ -140,6 +156,8 @@
 ---
 
 ### ✅ 9. `orders`
+
+## \_\_\_/get/data/8
 
 ```json
 {
@@ -162,6 +180,8 @@
 
 ### ✅ 10. `payments`
 
+## \_\_\_/get/data/9
+
 ```json
 {
   "Data": [
@@ -179,6 +199,8 @@
 ---
 
 ### ✅ 11. `transactions`
+
+## \_\_\_/get/data/10
 
 ```json
 {
@@ -199,6 +221,8 @@
 
 ### ✅ 12. `product_batches`
 
+## \_\_\_/get/data/11
+
 ```json
 {
   "Data": [
@@ -216,6 +240,8 @@
 ---
 
 ### ✅ 13. `inventory_logs`
+
+## \_\_\_/get/data/12
 
 ```json
 {
@@ -236,6 +262,8 @@
 
 ### ✅ 14. `product_recipes`
 
+## \_\_\_/get/data/13
+
 ```json
 {
   "Data": [
@@ -251,6 +279,8 @@
 ---
 
 ### ✅ 15. `product_quality_checks`
+
+## \_\_\_/get/data/14
 
 ```json
 {
@@ -269,6 +299,8 @@
 ---
 
 ### ✅ 16. `store_transfers`
+
+## \_\_\_/get/data/15
 
 ```json
 {
@@ -289,6 +321,8 @@
 
 ### ✅ 17. `customer_feedback`
 
+## \_\_\_/get/data/16
+
 ```json
 {
   "Data": [
@@ -306,6 +340,8 @@
 ---
 
 ### ✅ 18. `product_returns`
+
+## \_\_\_/get/data/17
 
 ```json
 {
@@ -325,6 +361,8 @@
 
 ### ✅ 19. `system_users`
 
+## \_\_\_/get/data/18
+
 ```json
 {
   "Data": [
@@ -341,6 +379,8 @@
 ---
 
 ### ✅ 20. `audit_logs`
+
+## \_\_\_/get/data/19
 
 ```json
 {
