@@ -1,17 +1,3 @@
-/*[
-0 "regions",
-1 "provider",
-2 "textbooks",
-3 "book_list"
-4 "users"
-5 "vbook_read_hostory",
-6 "vpromotions",
-7 "vnews",
-8 "vnew_arivals"
-9 "edu_news"
-]
- */
-
 let table = [
   // 0. USER & ROLE MANAGEMENT
   "roles", // 0

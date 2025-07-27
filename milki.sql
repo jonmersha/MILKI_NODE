@@ -1,25 +1,14 @@
 -- ==========================================
--- 0. ENUM DEFINITIONS
--- ==========================================
-CREATE TYPE store_type AS ENUM ('raw_material', 'finished_goods', 'general');
-CREATE TYPE product_type AS ENUM ('raw', 'semi_finished', 'finished');
-CREATE TYPE transaction_type AS ENUM ('incoming', 'outgoing', 'transfer');
-CREATE TYPE order_status AS ENUM ('pending', 'approved', 'fulfilled', 'cancelled');
-CREATE TYPE payment_type AS ENUM ('incoming', 'outgoing');
-CREATE TYPE payment_status AS ENUM ('unpaid', 'partial', 'paid');
-CREATE TYPE action_type AS ENUM ('CREATE', 'UPDATE', 'DELETE', 'PROCESS');
-
--- ==========================================
 -- 1. USER & ROLE MANAGEMENT
 -- ==========================================
 CREATE TABLE roles (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) UNIQUE NOT NULL,
     description TEXT
 );
 
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100),
     password_hash TEXT NOT NULL,
@@ -28,177 +17,200 @@ CREATE TABLE users (
 );
 
 CREATE TABLE user_roles (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    role_id INTEGER REFERENCES roles(id),
-    UNIQUE(user_id, role_id)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    role_id INT,
+    UNIQUE(user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
 -- ==========================================
 -- 2. FACTORIES & STORES
 -- ==========================================
 CREATE TABLE factories (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     location TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE stores (
-    id SERIAL PRIMARY KEY,
-    factory_id INTEGER REFERENCES factories(id) ON DELETE CASCADE,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    factory_id INT,
     name VARCHAR(100) NOT NULL,
-    type store_type NOT NULL,
+    type ENUM('raw_material', 'finished_goods', 'general') NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (factory_id, name)
+    UNIQUE (factory_id, name),
+    FOREIGN KEY (factory_id) REFERENCES factories(id) ON DELETE CASCADE
 );
 
 -- ==========================================
 -- 3. PRODUCT CATALOG
 -- ==========================================
 CREATE TABLE product_categories (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE products (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     code VARCHAR(30) UNIQUE NOT NULL,
-    category_id INTEGER REFERENCES product_categories(id),
-    unit VARCHAR(20) NOT NULL, -- e.g. kg, quintal
-    type product_type NOT NULL,
+    category_id INT,
+    unit VARCHAR(20) NOT NULL,
+    type ENUM('raw', 'semi_finished', 'finished') NOT NULL,
     description TEXT,
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES product_categories(id)
 );
 
 -- ==========================================
 -- 4. STOCK MANAGEMENT
 -- ==========================================
 CREATE TABLE stock (
-    id SERIAL PRIMARY KEY,
-    store_id INTEGER REFERENCES stores(id),
-    product_id INTEGER REFERENCES products(id),
-    quantity NUMERIC(15, 3) DEFAULT 0,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    store_id INT,
+    product_id INT,
+    quantity DECIMAL(15, 3) DEFAULT 0,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (store_id, product_id)
+    UNIQUE (store_id, product_id),
+    FOREIGN KEY (store_id) REFERENCES stores(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
 -- ==========================================
 -- 5. TRANSACTIONS (IN/OUT/TRANSFER)
 -- ==========================================
 CREATE TABLE transactions (
-    id SERIAL PRIMARY KEY,
-    transaction_type transaction_type NOT NULL,
-    store_id INTEGER REFERENCES stores(id),
-    product_id INTEGER REFERENCES products(id),
-    quantity NUMERIC(15, 3) CHECK (quantity >= 0),
-    transaction_date DATE DEFAULT CURRENT_DATE,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    transaction_type ENUM('incoming', 'outgoing', 'transfer') NOT NULL,
+    store_id INT,
+    product_id INT,
+    quantity DECIMAL(15, 3) CHECK (quantity >= 0),
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     source_or_destination TEXT,
     reference TEXT,
-    created_by INTEGER REFERENCES users(id),
-    remarks TEXT
+    created_by INT,
+    remarks TEXT,
+    FOREIGN KEY (store_id) REFERENCES stores(id),
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
--- Optional: for internal transfers
 CREATE TABLE store_transfers (
-    id SERIAL PRIMARY KEY,
-    from_store_id INTEGER REFERENCES stores(id),
-    to_store_id INTEGER REFERENCES stores(id),
-    product_id INTEGER REFERENCES products(id),
-    quantity NUMERIC(15, 3) CHECK (quantity > 0),
-    transfer_date DATE DEFAULT CURRENT_DATE,
-    initiated_by INTEGER REFERENCES users(id),
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from_store_id INT,
+    to_store_id INT,
+    product_id INT,
+    quantity DECIMAL(15, 3) CHECK (quantity > 0),
+    transfer_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    initiated_by INT,
     remarks TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (from_store_id) REFERENCES stores(id),
+    FOREIGN KEY (to_store_id) REFERENCES stores(id),
+    FOREIGN KEY (product_id) REFERENCES products(id),
+    FOREIGN KEY (initiated_by) REFERENCES users(id)
 );
 
 -- ==========================================
--- 6. PRODUCT PROCESSING (e.g., mix wheat + corn)
+-- 6. PRODUCT PROCESSING
 -- ==========================================
 CREATE TABLE processing (
-    id SERIAL PRIMARY KEY,
-    store_id INTEGER REFERENCES stores(id),
-    output_product_id INTEGER REFERENCES products(id),
-    total_output_quantity NUMERIC(15, 3),
-    processing_date DATE DEFAULT CURRENT_DATE,
-    created_by INTEGER REFERENCES users(id),
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    store_id INT,
+    output_product_id INT,
+    total_output_quantity DECIMAL(15, 3),
+    processing_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_by INT,
     remarks TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (store_id) REFERENCES stores(id),
+    FOREIGN KEY (output_product_id) REFERENCES products(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
 CREATE TABLE processing_inputs (
-    id SERIAL PRIMARY KEY,
-    processing_id INTEGER REFERENCES processing(id) ON DELETE CASCADE,
-    input_product_id INTEGER REFERENCES products(id),
-    quantity_used NUMERIC(15, 3)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    processing_id INT,
+    input_product_id INT,
+    quantity_used DECIMAL(15, 3),
+    FOREIGN KEY (processing_id) REFERENCES processing(id) ON DELETE CASCADE,
+    FOREIGN KEY (input_product_id) REFERENCES products(id)
 );
 
 -- ==========================================
 -- 7. SUPPLIER PURCHASE ORDERS
 -- ==========================================
 CREATE TABLE suppliers (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     contact TEXT
 );
 
 CREATE TABLE purchase_orders (
-    id SERIAL PRIMARY KEY,
-    supplier_id INTEGER REFERENCES suppliers(id),
-    order_date DATE DEFAULT CURRENT_DATE,
-    status order_status DEFAULT 'pending',
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    supplier_id INT,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('pending', 'approved', 'fulfilled', 'cancelled') DEFAULT 'pending',
     expected_delivery DATE,
-    remarks TEXT
+    remarks TEXT,
+    FOREIGN KEY (supplier_id) REFERENCES suppliers(id)
 );
 
 CREATE TABLE purchase_order_items (
-    id SERIAL PRIMARY KEY,
-    purchase_order_id INTEGER REFERENCES purchase_orders(id),
-    product_id INTEGER REFERENCES products(id),
-    quantity NUMERIC(15, 3),
-    unit_price NUMERIC(10, 2)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    purchase_order_id INT,
+    product_id INT,
+    quantity DECIMAL(15, 3),
+    unit_price DECIMAL(10, 2),
+    FOREIGN KEY (purchase_order_id) REFERENCES purchase_orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
 -- ==========================================
 -- 8. CUSTOMER SALES ORDERS
 -- ==========================================
 CREATE TABLE customers (
-    id SERIAL PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     contact TEXT
 );
 
 CREATE TABLE sales_orders (
-    id SERIAL PRIMARY KEY,
-    customer_id INTEGER REFERENCES customers(id),
-    order_date DATE DEFAULT CURRENT_DATE,
-    status order_status DEFAULT 'pending',
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('pending', 'approved', 'fulfilled', 'cancelled') DEFAULT 'pending',
     delivery_date DATE,
-    remarks TEXT
+    remarks TEXT,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
 );
 
 CREATE TABLE sales_order_items (
-    id SERIAL PRIMARY KEY,
-    sales_order_id INTEGER REFERENCES sales_orders(id),
-    product_id INTEGER REFERENCES products(id),
-    quantity NUMERIC(15, 3),
-    unit_price NUMERIC(10, 2)
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sales_order_id INT,
+    product_id INT,
+    quantity DECIMAL(15, 3),
+    unit_price DECIMAL(10, 2),
+    FOREIGN KEY (sales_order_id) REFERENCES sales_orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
 -- ==========================================
--- 9. PAYMENTS (CUSTOMERS & SUPPLIERS)
+-- 9. PAYMENTS
 -- ==========================================
 CREATE TABLE payments (
-    id SERIAL PRIMARY KEY,
-    payment_type payment_type NOT NULL, -- incoming = from customer, outgoing = to supplier
-    ref_order_id INTEGER,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_type ENUM('incoming', 'outgoing') NOT NULL,
+    ref_order_id INT,
     ref_order_type VARCHAR(20), -- 'purchase' or 'sales'
-    amount NUMERIC(15, 2),
-    paid_on DATE DEFAULT CURRENT_DATE,
-    status payment_status DEFAULT 'unpaid',
+    amount DECIMAL(15, 2),
+    paid_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status ENUM('unpaid', 'partial', 'paid') DEFAULT 'unpaid',
     paid_by TEXT,
     remarks TEXT
 );
@@ -207,11 +219,12 @@ CREATE TABLE payments (
 -- 10. AUDIT LOGS
 -- ==========================================
 CREATE TABLE transaction_logs (
-    id SERIAL PRIMARY KEY,
-    action_type action_type NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    action_type ENUM('CREATE', 'UPDATE', 'DELETE', 'PROCESS') NOT NULL,
     table_name VARCHAR(50),
-    record_id INTEGER,
-    performed_by INTEGER REFERENCES users(id),
+    record_id INT,
+    performed_by INT,
     action_details TEXT,
-    action_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    action_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (performed_by) REFERENCES users(id)
 );
