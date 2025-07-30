@@ -228,3 +228,166 @@ CREATE TABLE transaction_logs (
     action_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (performed_by) REFERENCES users(id)
 );
+
+
+--- ==============================================
+--- ============================================
+-- ==========================================
+-- 1. Inventory per Store
+-- =================================================
+CREATE VIEW view_inventory_per_store AS
+SELECT 
+    s.name AS store_name,
+    p.name AS product_name,
+    p.code,
+    stk.quantity,
+    stk.last_updated
+FROM stock stk
+JOIN stores s ON stk.store_id = s.id
+JOIN products p ON stk.product_id = p.id;
+
+-- ==========================================
+-- 2. Total Stock per Product
+-- ==========================================
+CREATE VIEW view_total_stock_per_product AS
+SELECT 
+    p.name AS product_name,
+    p.code,
+    SUM(stk.quantity) AS total_quantity
+FROM stock stk
+JOIN products p ON stk.product_id = p.id
+GROUP BY stk.product_id;
+
+-- ==========================================
+-- 3. Sales Summary by Customer
+-- ==========================================
+CREATE VIEW view_sales_summary_by_customer AS
+SELECT 
+    c.name AS customer_name,
+    COUNT(so.id) AS total_orders,
+    SUM(soi.quantity * soi.unit_price) AS total_sales_amount
+FROM sales_orders so
+JOIN customers c ON so.customer_id = c.id
+JOIN sales_order_items soi ON soi.sales_order_id = so.id
+GROUP BY c.id;
+
+-- ==========================================
+-- 4. Purchase Summary by Supplier
+-- ==========================================
+CREATE VIEW view_purchase_summary_by_supplier AS
+SELECT 
+    s.name AS supplier_name,
+    COUNT(po.id) AS total_orders,
+    SUM(poi.quantity * poi.unit_price) AS total_purchase_amount
+FROM purchase_orders po
+JOIN suppliers s ON po.supplier_id = s.id
+JOIN purchase_order_items poi ON poi.purchase_order_id = po.id
+GROUP BY s.id;
+
+-- ==========================================
+-- 5. Payments Summary
+-- ==========================================
+CREATE VIEW view_payments_summary AS
+SELECT 
+    payment_type,
+    status,
+    COUNT(id) AS total_transactions,
+    SUM(amount) AS total_amount
+FROM payments
+GROUP BY payment_type, status;
+
+-- ==========================================
+-- 6. Store Transfers Summary
+-- ==========================================
+CREATE VIEW view_store_transfers_summary AS
+SELECT 
+    f.name AS from_store,
+    t.name AS to_store,
+    p.name AS product_name,
+    SUM(st.quantity) AS total_transferred
+FROM store_transfers st
+JOIN stores f ON st.from_store_id = f.id
+JOIN stores t ON st.to_store_id = t.id
+JOIN products p ON st.product_id = p.id
+GROUP BY f.name, t.name, p.name;
+
+-- ==========================================
+-- 7. Processing Output Summary
+-- ==========================================
+CREATE VIEW view_processing_output_summary AS
+SELECT 
+    p.name AS output_product,
+    pr.total_output_quantity,
+    pr.processing_date,
+    s.name AS store,
+    u.username AS created_by
+FROM processing pr
+JOIN products p ON pr.output_product_id = p.id
+JOIN stores s ON pr.store_id = s.id
+JOIN users u ON pr.created_by = u.id;
+
+-- ==========================================
+-- 8. Processing Input Summary
+-- ==========================================
+CREATE VIEW view_processing_input_summary AS
+SELECT 
+    pi.processing_id,
+    p.name AS input_product,
+    pi.quantity_used
+FROM processing_inputs pi
+JOIN products p ON pi.input_product_id = p.id;
+
+-- ==========================================
+-- 9. Stock Value Summary
+-- ==========================================
+CREATE VIEW view_stock_value_summary AS
+WITH avg_price AS (
+  SELECT 
+    product_id, 
+    AVG(unit_price) AS avg_unit_price
+  FROM purchase_order_items
+  GROUP BY product_id
+)
+SELECT 
+    p.name AS product_name,
+    stk.quantity,
+    ap.avg_unit_price,
+    stk.quantity * ap.avg_unit_price AS stock_value
+FROM stock stk
+JOIN products p ON stk.product_id = p.id
+JOIN avg_price ap ON stk.product_id = ap.product_id;
+
+-- ==========================================
+-- 10. User Activity Log Summary
+-- ==========================================
+CREATE VIEW view_user_activity_log_summary AS
+SELECT 
+    u.username,
+    tl.table_name,
+    tl.action_type,
+    COUNT(*) AS total_actions
+FROM transaction_logs tl
+JOIN users u ON tl.performed_by = u.id
+GROUP BY u.username, tl.table_name, tl.action_type;
+
+-- ==========================================
+-- 11. Monthly Sales Trend
+-- ==========================================
+CREATE VIEW view_monthly_sales_trend AS
+SELECT 
+    DATE_FORMAT(order_date, '%Y-%m') AS month,
+    SUM(soi.quantity * soi.unit_price) AS total_sales
+FROM sales_orders so
+JOIN sales_order_items soi ON soi.sales_order_id = so.id
+GROUP BY month;
+
+-- ==========================================
+-- 12. Monthly Purchases Trend
+-- ==========================================
+CREATE VIEW view_monthly_purchases_trend AS
+SELECT 
+    DATE_FORMAT(order_date, '%Y-%m') AS month,
+    SUM(poi.quantity * poi.unit_price) AS total_purchases
+FROM purchase_orders po
+JOIN purchase_order_items poi ON poi.purchase_order_id = po.id
+GROUP BY month;

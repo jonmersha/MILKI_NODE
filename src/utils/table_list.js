@@ -38,5 +38,18 @@ let table = [
 
   // 19. AUDIT LOGS
   "transaction_logs", // 19
+
+  "view_inventory_per_store", // 20
+  "view_total_stock_per_product", // 21
+  "view_stock_value_summary", // 22
+  "view_sales_summary_by_customer", // 23
+  "view_monthly_sales_trend", // 24
+  "view_purchase_summary_by_supplier", // 25
+  "view_monthly_purchases_trend", // 26
+  "view_payments_summary", // 27
+  "view_store_transfers_summary", // 28
+  "view_processing_output_summary", // 29
+  "view_processing_input_summary", // 30
+  "view_user_activity_log_summary", // 31
 ];
 module.exports = table;
