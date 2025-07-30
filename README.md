@@ -688,3 +688,264 @@ If you want:
 2. These are used system-wide for consistency
 3. Updates are versioned and auditable
 4. Used in dropdowns and validations
+
+# Menu Orginzations
+
+## 🔐 1. **User & Role Management**
+
+- **User Authentication** (Login/Logout, hashed password)
+- **User Registration & Activation**
+- **User Profile Management**
+- **Role-Based Access Control (RBAC)**
+- **User-Role Assignment**
+- **User Status Toggle (Active/Inactive)**
+
+---
+
+## 🏭 2. **Factories & Stores**
+
+- **Factory Registration and Management**
+- **Store Creation per Factory**
+- **Store Type Management** (Raw Material / Finished Goods / General)
+- **Store Activation/Deactivation**
+- **Cascading Deletion of Stores on Factory Removal**
+
+---
+
+## 📦 3. **Product Catalog**
+
+- **Product Category Management**
+- **Product Creation & Management**
+
+  - Code uniqueness
+  - Product types: Raw / Semi-finished / Finished
+
+- **Unit of Measurement Handling**
+- **Product Description & Status**
+
+---
+
+## 🧮 4. **Stock Management**
+
+- **View and Manage Stock Levels by Store**
+- **Automatic Stock Update after Transactions**
+- **Low Stock Alerts**
+- **Stock Last Updated Timestamp**
+
+---
+
+## 🔁 5. **Transactions (In/Out/Transfer)**
+
+- **Incoming Goods Registration**
+- **Outgoing Goods Tracking**
+- **Store-to-Store Transfers**
+- **Transaction Logs and History**
+- **Reference and Source/Destination Tracking**
+- **User Attribution (Created By)**
+- **Remarks and Notes on Each Transaction**
+
+---
+
+## ⚙️ 6. **Product Processing**
+
+- **Define Processing Recipes (Input → Output)**
+- **Record Production Activities**
+- **Track Input Product Usage**
+- **Track Output Product Quantities**
+- **Link to Store and User**
+- **Maintain Historical Processing Records**
+
+---
+
+## 📥 7. **Supplier Purchase Orders**
+
+- **Supplier Management**
+- **Purchase Order Creation & Status Management**
+  (Pending, Approved, Fulfilled, Cancelled)
+- **Expected Delivery Dates**
+- **Purchase Order Line Items**
+- **Record Unit Prices & Quantities**
+- **Track Supplier Deliveries and Fulfillment**
+
+---
+
+## 📤 8. **Customer Sales Orders**
+
+- **Customer Management**
+- **Sales Order Creation & Status Management**
+  (Pending, Approved, Fulfilled, Cancelled)
+- **Delivery Dates Tracking**
+- **Sales Order Line Items**
+- **Unit Prices per Order**
+- **Customer Fulfillment Tracking**
+
+---
+
+## 💳 9. **Payments**
+
+- **Record Payments for Purchase or Sales Orders**
+- **Payment Status Management** (Unpaid / Partial / Paid)
+- **Link Payments to Orders**
+- **Track Payment Dates and Amounts**
+- **Payer Information Capture**
+- **Remarks and Comments Handling**
+
+---
+
+## 📝 10. **Audit Logs**
+
+- **Track all Create, Update, Delete, Process actions**
+- **Log the table name, action, user, and details**
+- **Action timestamp for auditing purposes**
+- **Admin access to review all logs**
+
+---
+
+## 📊 Optional Dashboard Features
+
+You can also add dashboards for enhanced usability:
+
+- **Factory & Store Overview**
+- **Product Stock Summary**
+- **Purchase & Sales Order Reports**
+- **Top Suppliers / Customers**
+- **Inventory Flow Charts**
+- **Audit & Transaction Trends**
+
+## 🏠 **Dashboard**
+
+- **Home Dashboard**
+
+  - Overview of key metrics (stocks, orders, payments)
+  - Quick access links (create PO, view transactions)
+  - Charts: Stock levels, top-selling products, order status distribution
+
+---
+
+## 👤 **User Management**
+
+- **Users List**
+- **Create/Edit User**
+- **Assign Roles to Users**
+- **Roles List**
+- **Create/Edit Role**
+
+---
+
+## 🏭 **Factories & Stores**
+
+- **Factories List**
+- **Create/Edit Factory**
+- **Stores List (per Factory)**
+- **Create/Edit Store**
+- **Store Types (raw_material, finished_goods, general)**
+
+---
+
+## 📦 **Product Management**
+
+- **Product Categories**
+- **Products List**
+- **Create/Edit Product**
+- **View Product Details**
+- **Product Status Management**
+
+---
+
+## 📊 **Inventory Management**
+
+- **Stock Overview by Store**
+- **Update Stock (Manual or via Transaction)**
+- **Low Stock Alerts**
+- **Stock History Log**
+
+---
+
+## 🔄 **Transactions**
+
+- **All Transactions List**
+- **Create Incoming Transaction**
+- **Create Outgoing Transaction**
+- **Create Transfer**
+- **Transaction Details**
+- **Transaction Reports (filters, export)**
+
+---
+
+## ⚙️ **Processing**
+
+- **Processing Activities List**
+- **Create New Processing**
+- **View Processing Details**
+- **Input & Output Products**
+- **Processing Reports**
+
+---
+
+## 📥 **Purchases**
+
+- **Suppliers List**
+- **Create/Edit Supplier**
+- **Purchase Orders List**
+- **Create/Edit Purchase Order**
+- **PO Items Entry**
+- **PO Status Tracking**
+- **PO Reports**
+
+---
+
+## 📤 **Sales**
+
+- **Customers List**
+- **Create/Edit Customer**
+- **Sales Orders List**
+- **Create/Edit Sales Order**
+- **Sales Order Items Entry**
+- **Sales Order Status Tracking**
+- **Sales Reports**
+
+---
+
+## 💳 **Payments**
+
+- **Payments List**
+- **Record Incoming Payment (from Customer)**
+- **Record Outgoing Payment (to Supplier)**
+- **Link Payments to Orders**
+- **Payment Status Overview**
+- **Payment Reports**
+
+---
+
+## 📑 **Audit Logs**
+
+- **View Logs by Table/Action/User**
+- **Filter Logs by Date**
+- **Export Logs**
+
+---
+
+## ⚙️ **Settings / Configuration**
+
+- **App Configuration (optional)**
+- **Units of Measurement (if not hardcoded)**
+- **Enums Management (Status, Types)**
+
+---
+
+## 📚 **Reports (optional section)**
+
+- **Inventory Valuation**
+- **Order Fulfillment Reports**
+- **Top Customers / Suppliers**
+- **Monthly Transaction Summary**
+- **Sales vs Purchase Comparison**
+
+---
+
+## 🔒 **Authentication Pages**
+
+- **Login**
+- **Logout**
+- **Reset Password / Forgot Password**
+- **Change Password**
