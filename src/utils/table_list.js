@@ -1,7 +1,7 @@
 let table = [
   "no_table", //0
   "Company", // 1
-  "Factory_Branches", // 2
+  "Factory", // 2
   "Warehouses", // 3
   "Products", // 4
   "Inventory", // 5

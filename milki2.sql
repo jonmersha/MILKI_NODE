@@ -48,7 +48,6 @@ CREATE TABLE Warehouses (
 -- 4. Products
 CREATE TABLE Products (
     P_CODE varchar(10) PRIMARY KEY,
-    product_code VARCHAR(100) UNIQUE,
     product_name VARCHAR(100),
     product_description TEXT,
     product_type VARCHAR(100),
@@ -62,6 +61,7 @@ CREATE TABLE Products (
 );
 
 -- 5. Inventory
+-- ========================
 CREATE TABLE Inventory (
     INV_CODE INT AUTO_INCREMENT PRIMARY KEY,
     P_CODE varchar(10),
