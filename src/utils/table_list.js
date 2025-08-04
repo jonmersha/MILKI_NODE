@@ -17,6 +17,8 @@ let table = [
   "User_Audit_Log", // 15
   "Segregation_Rules", // 16
   "view_purchase_orders", //17
+  "view_sales_orders", //18
+  "view_inventory_status", //19
 ];
 
 module.exports = table;
